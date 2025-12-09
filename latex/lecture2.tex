@@ -1,0 +1,184 @@
+\documentclass{beamer}
+\mode<presentation>{
+  \usetheme{Madrid}
+  \setbeamertemplate{navigation symbols}{}
+}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+% Title info
+\title[Image Formation]{Image Formation \& Geometric Camera Models}
+\author{Adapted from: Computer Vision Lecture 2.2 (video) \\ and Geometric Image Formation notes}
+\institute{Prepared by Your Name}
+\date{\today}
+
+\begin{document}
+
+% Title slide
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Outline
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Learning Objectives}
+\begin{frame}{Learning Objectives}
+  \begin{itemize}
+    \item Understand the pinhole camera model and perspective projection.
+    \item Represent points and transformations using homogeneous coordinates.
+    \item Build the camera projection matrix and separate intrinsics/extrinsics.
+    \item Recognize common lens distortions and basics of calibration.
+  \end{itemize}
+\end{frame}
+
+\section{Why geometric image formation?}
+\begin{frame}{Why geometric image formation?}
+  \begin{itemize}
+    \item Relates 3D scene geometry to 2D images.
+    \item Foundation for stereo, structure-from-motion, pose estimation, calibration.
+    \item Mathematical models let us invert or reason about scene geometry.
+  \end{itemize}
+\end{frame}
+
+\section{Pinhole Camera Model}
+\begin{frame}{Pinhole camera model}
+  \begin{columns}
+    \column{0.55\textwidth}
+      \textbf{Intuition:} A pinhole camera projects 3D points onto an image plane through a single center of projection.
+      \vspace{6pt}
+      \begin{align*}
+        \text{3D point } &\mathbf{X} = (X,Y,Z)^\top \\
+        \text{Image point } & (x,y) = \left(\frac{f X}{Z}, \frac{f Y}{Z}\right)
+      \end{align*}
+      where \(f\) is the focal length.
+    \column{0.45\textwidth}
+      % Placeholder for optional figure
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.9\linewidth]{pinhole_diagram_placeholder.png}
+        \caption*{Pinhole geometry (replace with own figure).}
+      \end{figure}
+  \end{columns}
+\end{frame}
+
+\section{Homogeneous Coordinates}
+\begin{frame}{Homogeneous coordinates}
+  \begin{itemize}
+    \item Represent Euclidean 2D/3D points with extra coordinate for linear transformations.
+    \item 3D point: \(\tilde{\mathbf{X}} = (X, Y, Z, 1)^\top\).
+    \item 2D image (homogeneous): \(\tilde{\mathbf{x}} = (x, y, 1)^\top\).
+    \item Perspective projection becomes linear in homogeneous coordinates:
+    \[
+      s \tilde{\mathbf{x}} = \mathbf{P} \, \tilde{\mathbf{X}}
+    \]
+    where \(s\) is scale and \(\mathbf{P}\) is the \(3\times4\) projection matrix.
+  \end{itemize}
+\end{frame}
+
+\section{Projection Matrix}
+\begin{frame}{Camera projection matrix}
+  \begin{itemize}
+    \item Full camera matrix: \(\mathbf{P} = \mathbf{K} [\mathbf{R} \mid \mathbf{t}]\)
+    \item \(\mathbf{K}\) (intrinsics) and \([\mathbf{R}\mid\mathbf{t}]\) (extrinsics):
+    \[
+      \mathbf{K} =
+      \begin{bmatrix}
+        f_x & s & c_x \\
+        0 & f_y & c_y \\
+        0 & 0 & 1
+      \end{bmatrix}
+    \]
+    where \(f_x,f_y\) are focal lengths (pixels), \(s\) is skew, and \(c_x,c_y\) is principal point.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Interpretation of extrinsics}
+  \begin{itemize}
+    \item World-to-camera: \(\mathbf{X}_c = \mathbf{R}\mathbf{X}_w + \mathbf{t}\).
+    \item \(\mathbf{R}\) is a 3×3 rotation, \(\mathbf{t}\) is translation — together they place the camera in the world.
+    \item Combined into projection: \(\tilde{\mathbf{x}} \sim \mathbf{K}[\mathbf{R} \mid \mathbf{t}] \tilde{\mathbf{X}}_w\).
+  \end{itemize}
+\end{frame}
+
+\section{Common Camera Models}
+\begin{frame}{Other camera approximations}
+  \begin{itemize}
+    \item \textbf{Orthographic / scaled orthographic:} approximates perspective when depth variation is small.
+    \item \textbf{Affine camera:} linear mapping, drops division by \(Z\).
+    \item \textbf{Omnidirectional / generalized cameras:} spherical, catadioptric or multi-view sensors.
+  \end{itemize}
+\end{frame}
+
+\section{Lens Distortion}
+\begin{frame}{Lens distortion (radial \& tangential)}
+  \begin{itemize}
+    \item Real lenses introduce radial distortion \(r\) (barrel/pincushion) and tangential terms due to misalignment.
+    \item Simple radial correction (2–3 coefficients):
+    \[
+      x_{\text{dist}} = x(1 + k_1 r^2 + k_2 r^4 + \dots)
+    \]
+    where \(r^2 = x^2 + y^2\) in normalized image coordinates.
+  \end{itemize}
+\end{frame}
+
+\section{Camera Calibration}
+\begin{frame}{Camera calibration}
+  \begin{itemize}
+    \item Estimate \(\mathbf{K}\), \(\mathbf{R}\), \(\mathbf{t}\) (and distortion) from known 3D–2D correspondences.
+    \item Common toolboxes: Bouguet's Camera Calibration Toolbox, OpenCV calibrateCamera.
+    \item Calibration yields parameters used to undistort images and recover metric geometry.
+  \end{itemize}
+\end{frame}
+
+\section{Worked Example (Projection)}
+\begin{frame}{Example: projecting a 3D point}
+  Given \(\mathbf{X}=(X,Y,Z)^\top\), compute image point:
+  \[
+    s
+    \begin{bmatrix} u \\ v \\ 1 \end{bmatrix}
+    =
+    \begin{bmatrix}
+      f_x & s & c_x \\
+      0 & f_y & c_y \\
+      0 & 0 & 1
+    \end{bmatrix}
+    \big[\mathbf{R}\mid\mathbf{t}\big]
+    \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}
+  \]
+  Solve for \(u = \frac{s_u}{s_w},\; v=\frac{s_v}{s_w}\).
+\end{frame}
+
+\section{Takeaways}
+\begin{frame}{Takeaways}
+  \begin{itemize}
+    \item The pinhole model and homogeneous coordinates give a compact, linear framework for projection.
+    \item Intrinsics vs extrinsics: intrinsics describe the camera sensor/lens, extrinsics describe camera pose.
+    \item Calibration and distortion modeling are essential for accurate geometric tasks.
+  \end{itemize}
+\end{frame}
+
+\section{References}
+\begin{frame}{References}
+  \begin{itemize}
+    \item Lecture video: ``Computer Vision - Lecture 2.2 (Image Formation: Geometric ...)'' (YouTube). % cite in chat
+    \item Lecture notes: Geometric Image Formation (example course notes). % cite in chat
+    \item R. Szeliski, \textit{Computer Vision: Algorithms and Applications} and Hartley \& Zisserman, \textit{Multiple View Geometry}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Appendix: Useful formulas}
+  \small
+  \begin{itemize}
+    \item \(\mathbf{P} = \mathbf{K}[\mathbf{R}\mid \mathbf{t}]\)
+    \item Projection (homogeneous): \( s\tilde{\mathbf{x}} = \mathbf{P}\tilde{\mathbf{X}} \)
+    \item Intrinsics matrix \(\mathbf{K}\) shown earlier.
+  \end{itemize}
+\end{frame}
+
+\end{document}

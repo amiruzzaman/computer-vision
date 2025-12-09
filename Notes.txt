@@ -1,0 +1,5 @@
+https://www.cs.princeton.edu/courses/archive/fall11/cos429/notes/
+https://16385.courses.cs.cmu.edu/fall2022/lecture/intro/slide_034
+https://graphics.stanford.edu/courses/cs205a-13-fall/assets/notes/cs205a_notes.pdf
+https://www.cis.upenn.edu/~cis5150/linalg-I-f.pdf
+https://inria.hal.science/cel-02129241/file/poly_3D_eng.pdf
