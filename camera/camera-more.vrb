@@ -1,0 +1,13 @@
+\frametitle{Red apple}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{red-apple.jpeg}
+    \caption{Apple measurement study}
+  \end{figure}
+
+  \vfill
+
+  \begin{block}{Reference}
+    \footnotesize
+    \bibentry{rs13193960}
+  \end{block}

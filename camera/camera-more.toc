@@ -1,0 +1,10 @@
+\beamer@sectionintoc {1}{Camera Geometry Basics}{3}{0}{1}
+\beamer@sectionintoc {2}{Rigid Transformations in Detail}{6}{0}{2}
+\beamer@sectionintoc {3}{Homogeneous Coordinates and Projective Geometry}{9}{0}{3}
+\beamer@sectionintoc {4}{Intrinsic Parameters in Detail}{12}{0}{4}
+\beamer@sectionintoc {5}{Perspective Projection Model}{14}{0}{5}
+\beamer@sectionintoc {6}{Lens Distortion Models}{16}{0}{6}
+\beamer@sectionintoc {7}{Camera Calibration Overview}{17}{0}{7}
+\beamer@sectionintoc {8}{Extended Examples}{18}{0}{8}
+\beamer@sectionintoc {9}{Applications and Advanced Topics}{22}{0}{9}
+\beamer@sectionintoc {10}{Discussion Questions}{23}{0}{10}

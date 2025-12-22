@@ -1,0 +1,282 @@
+\documentclass{beamer}
+
+% Theme and packages
+\usetheme{Madrid}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+% Title information
+\title[Camera Geometry]{Intrinsic and Extrinsic Parameters\\Rigid Transformations, Homogeneous Coordinates,\\and Perspective Projection}
+\author{Amir}
+\institute{}
+\date{}
+
+\begin{document}
+
+%------------------------------------------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Lecture Outline}
+\begin{itemize}
+  \item Camera models and coordinate systems
+  \item Rigid transformations in 3D
+  \item Homogeneous coordinates
+  \item Intrinsic and extrinsic camera parameters
+  \item Perspective projection model
+  \item Examples and discussion questions
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Camera Geometry Basics}
+
+\begin{frame}{Why Camera Geometry?}
+\begin{itemize}
+  \item Relates 3D world points to 2D image measurements
+  \item Foundation of computer vision tasks:
+  \begin{itemize}
+    \item Camera calibration
+    \item 3D reconstruction
+    \item Visual odometry and SLAM
+  \end{itemize}
+  \item Separates \emph{geometry} from \emph{appearance}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Coordinate Systems}
+\begin{itemize}
+  \item \textbf{World coordinate system}: fixed reference in the scene
+  \item \textbf{Camera coordinate system}: origin at the camera center
+  \item \textbf{Image coordinate system}: pixel coordinates on the image plane
+\end{itemize}
+
+\vspace{0.3cm}
+A key goal: map a 3D point
+\[
+\mathbf{X}_w = (X, Y, Z)^T
+\]
+from world coordinates to an image point
+\[
+\mathbf{x} = (u, v)^T.
+\]
+\end{frame}
+
+%------------------------------------------------
+\section{Rigid Transformations}
+
+\begin{frame}{Rigid Transformations in 3D}
+\textbf{Definition:} A rigid transformation preserves distances and angles.
+
+\vspace{0.3cm}
+It consists of:
+\begin{itemize}
+  \item Rotation $\mathbf{R} \in SO(3)$
+  \item Translation $\mathbf{t} \in \mathbb{R}^3$
+\end{itemize}
+
+\vspace{0.3cm}
+Mapping from world to camera coordinates:
+\[
+\mathbf{X}_c = \mathbf{R}\,\mathbf{X}_w + \mathbf{t}
+\]
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Rotation Matrix Properties}
+A rotation matrix $\mathbf{R}$ satisfies:
+\begin{itemize}
+  \item $\mathbf{R}^T \mathbf{R} = \mathbf{I}$ (orthonormality)
+  \item $\det(\mathbf{R}) = 1$
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Interpretation:}
+\begin{itemize}
+  \item Rows (or columns) represent camera axes
+  \item Encodes camera orientation in space
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Homogeneous Coordinates}
+
+\begin{frame}{Homogeneous Coordinates}
+\textbf{Motivation:}
+\begin{itemize}
+  \item Allow translation to be represented as matrix multiplication
+  \item Enable projective transformations
+\end{itemize}
+
+\vspace{0.3cm}
+A 3D point in homogeneous coordinates:
+\[
+\tilde{\mathbf{X}} = (X, Y, Z, 1)^T
+\]
+
+A 2D image point:
+\[
+\tilde{\mathbf{x}} = (u, v, 1)^T
+\]
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Rigid Transformation in Homogeneous Form}
+Using homogeneous coordinates:
+\[
+\tilde{\mathbf{X}}_c =
+\begin{bmatrix}
+\mathbf{R} & \mathbf{t} \\
+\mathbf{0}^T & 1
+\end{bmatrix}
+\tilde{\mathbf{X}}_w
+\]
+
+\vspace{0.3cm}
+This $4 \times 4$ matrix compactly represents rotation and translation.
+\end{frame}
+
+%------------------------------------------------
+\section{Intrinsic and Extrinsic Parameters}
+
+\begin{frame}{Extrinsic Parameters}
+\textbf{Definition:}
+Extrinsic parameters describe the \emph{pose} of the camera in the world.
+
+\vspace{0.3cm}
+They consist of:
+\begin{itemize}
+  \item Rotation $\mathbf{R}$
+  \item Translation $\mathbf{t}$
+\end{itemize}
+
+\vspace{0.3cm}
+They answer the question:
+\begin{quote}
+\emph{Where is the camera, and how is it oriented?}
+\end{quote}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Intrinsic Parameters}
+\textbf{Definition:}
+Intrinsic parameters describe the internal geometry of the camera.
+
+\vspace{0.3cm}
+They are encoded in the intrinsic matrix:
+\[
+\mathbf{K} =
+\begin{bmatrix}
+ f_x & s & c_x \\
+ 0   & f_y & c_y \\
+ 0   & 0   & 1
+\end{bmatrix}
+\]
+
+\begin{itemize}
+  \item $(f_x, f_y)$: focal lengths in pixel units
+  \item $(c_x, c_y)$: principal point
+  \item $s$: skew (often zero)
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Perspective Projection}
+
+\begin{frame}{Pinhole Camera Model}
+\textbf{Assumption:}
+\begin{itemize}
+  \item All light rays pass through a single point (camera center)
+\end{itemize}
+
+\vspace{0.3cm}
+Perspective projection from camera coordinates:
+\[
+(x, y) = \left( \frac{X_c}{Z_c}, \frac{Y_c}{Z_c} \right)
+\]
+
+\vspace{0.3cm}
+This explains:
+\begin{itemize}
+  \item Scale change with depth
+  \item Vanishing points
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Full Camera Projection Equation}
+Combining extrinsic and intrinsic parameters:
+\[
+\tilde{\mathbf{x}} \sim \mathbf{K}\,[\mathbf{R} \;|\; \mathbf{t}]\,\tilde{\mathbf{X}}_w
+\]
+
+\vspace{0.3cm}
+Where:
+\begin{itemize}
+  \item $\sim$ denotes equality up to scale
+  \item $\mathbf{P} = \mathbf{K}[\mathbf{R}|\mathbf{t}]$ is the \emph{camera projection matrix}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Examples}
+
+\begin{frame}{Example: Simple Projection}
+Assume:
+\begin{itemize}
+  \item $\mathbf{R} = \mathbf{I}$, $\mathbf{t} = \mathbf{0}$
+  \item $f_x = f_y = f$, $c_x = c_y = 0$
+\end{itemize}
+
+Then:
+\[
+\mathbf{x} = \left( f \frac{X}{Z},\; f \frac{Y}{Z} \right)
+\]
+
+\vspace{0.3cm}
+\textbf{Interpretation:}
+Objects farther from the camera appear smaller.
+\end{frame}
+
+%------------------------------------------------
+\section{Discussion Questions}
+
+\begin{frame}{Conceptual Questions}
+\begin{enumerate}
+  \item Why are intrinsic parameters independent of camera pose?
+  \item What happens to the projection when $Z \rightarrow 0$?
+  \item Why are homogeneous coordinates essential for perspective projection?
+  \item How would lens distortion violate the pinhole model assumptions?
+\end{enumerate}
+\end{frame}
+
+%------------------------------------------------
+\section{References}
+
+\begin{frame}{References}
+\footnotesize
+\begin{thebibliography}{9}
+
+\bibitem{HartleyZisserman}
+R. Hartley and A. Zisserman,
+\emph{Multiple View Geometry in Computer Vision},
+2nd ed., Cambridge University Press, 2004.
+
+\bibitem{Szeliski}
+R. Szeliski,
+\emph{Computer Vision: Algorithms and Applications},
+Springer, 2011.
+
+\bibitem{Faugeras}
+O. Faugeras,
+\emph{Three-Dimensional Computer Vision},
+MIT Press, 1993.
+
+\end{thebibliography}
+\end{frame}
+
+\end{document}

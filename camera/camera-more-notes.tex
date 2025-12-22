@@ -1,0 +1,117 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{setspace}
+
+\onehalfspacing
+
+\title{\textbf{Camera Geometry: Complete Slide-by-Slide Narration}\\
+\large Integrated Technical Trade-offs and Figure Discussions}
+\author{Amir}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Slide 1: Title Page}
+Welcome to this lecture on Camera Geometry. [cite_start] We will explore the mathematical bridge between the 3D world and 2D image measurements. [cite\_end] Our goal is to understand how physical objects are projected onto a digital sensor through geometric transformations.
+
+\section*{Slide 2: Lecture Outline}
+Our roadmap today covers the entire imaging pipeline. We begin with the physical motivation and coordinate systems, move into the 3D rigid transformations, and introduce the linearization trick of homogeneous coordinates. Finally, we dive into Intrinsic and Extrinsic parameters, lens distortion, and calibration.
+
+\section*{Slide 3: Extrinsic Camera Parameters}
+Extrinsics define the camera’s ``pose''---its location and orientation. 
+\begin{itemize}
+    \item \textbf{Advantage:} Allows modularity; we can move the camera without re-calibrating its internal optics.
+    \item \textbf{Disadvantage:} Sensitive to measurement noise; a tiny error in rotation $\mathbf{R}$ results in massive pixel errors for distant objects.
+\end{itemize}
+
+\section*{Slide 4: Intrinsic Camera Parameters}
+Intrinsics describe the camera's internal geometry. The matrix $\mathbf{K}$ handles focal lengths and the principal point.
+\begin{itemize}
+    \item \textbf{Advantage:} Once calibrated, these parameters remain constant regardless of where the camera is moved.
+    \item \textbf{Disadvantage:} Focal length can vary slightly with temperature or mechanical stress, leading to drift in high-precision tasks.
+\end{itemize}
+
+\section*{Slide 5: Why Camera Geometry?}
+Geometry is foundational because it is invariant to lighting and texture. While an object's appearance changes with the sun, its geometric position in space is an absolute truth we can compute.
+
+\section*{Slide 6: Red Apple (Case Study)}
+
+This figure demonstrates the power of geometry. By using the principles we are discussing, researchers achieved 0.16 mm precision in a 3D reconstruction. This allows for metric analysis of volume and growth without physical contact.
+
+\section*{Slide 7: Coordinate Systems in Detail}
+
+We use four frames: World, Camera, Image, and Pixel. This separation of concerns allows us to handle environment-specific data in the World frame and hardware-specific data in the Pixel frame independently.
+
+\section*{Slide 8: Rigid Transformation}
+A rigid transformation preserves Euclidean distance. In the figure, you see that the object's shape is unchanged; it is merely rotated and translated.
+\begin{itemize}
+    \item \textbf{Advantage:} Simplifies math by reducing motion to 6 degrees of freedom.
+    \item \textbf{Disadvantage:} Does not account for "soft" objects or lens zooming.
+\end{itemize}
+
+\section*{Slide 9: Defining $SO(3)$}
+
+We define $SO(3)$ as the set of matrices where $R^T R = I$ and $\det(R) = 1$. This ensures the camera doesn't "stretch" space or mathematically turn "inside out" (reflection).
+
+\section*{Slide 10: Rotation Representations}
+
+We compare Euler Angles (intuitive but prone to gimbal lock) and Quaternions (complex but robust for interpolation).
+
+\section*{Slide 11: Properties of Rotation Matrices}
+Rotation matrices are orthogonal. A key \textbf{advantage} is that the inverse is the transpose, making back-projection calculations incredibly fast. However, a \textbf{disadvantage} is that maintaining orthogonality during optimization requires special "on-manifold" solvers.
+
+\section*{Slide 12: Why Homogeneous Coordinates?}
+
+\textbf{Definition:} Representing an $n$-D point as an $(n+1)$-D vector.
+\begin{itemize}
+    \item \textbf{Advantage:} Linearizes perspective projection (converts division into multiplication).
+    \item \textbf{Disadvantage:} Adds redundancy (scale ambiguity); $(x, y, 1)$ is the same as $(2x, 2y, 2)$.
+\end{itemize}
+
+\section*{Slide 13: Homogeneous Coordinates: Examples}
+We look at how a 3D point $\mathbf{X}$ is transformed into $\tilde{\mathbf{X}}$. This notation allows us to represent "points at infinity" (vanishing points) simply by setting the last coordinate to zero.
+
+\section*{Slide 14: Projective Transformations}
+This slide shows how complex warps are condensed into simple $3 \times 3$ matrices. This makes it possible to use standard linear solvers (like SVD) to find the relationship between two images of the same floor or wall.
+
+\section*{Slide 15: Intrinsic Matrix Components}
+We break down the matrix $\mathbf{K}$ into focal lengths ($f_x, f_y$) and principal point ($c_x, c_y$). This is the final step in the pipeline that turns metric measurements into the pixels you see on a screen.
+
+\section*{Slide 16: Focal Length Interpretation}
+
+Focal length is the physical distance between the pinhole and the sensor. A long focal length is a "telephoto" lens (narrow view), while a short one is "wide-angle."
+
+\section*{Slide 17: Pinhole Camera Derivation}
+Using the figure, we apply similar triangles: $x/f = X/Z$. This gives us the projection formula $x = fX/Z$. It explains why objects further away (larger $Z$) appear smaller on the sensor.
+
+\section*{Slide 18: Complete Projection Pipeline}
+We combine everything into the "Golden Equation" of camera geometry: $\mathbf{x} = \mathbf{K} [\mathbf{R} | \mathbf{t}] \mathbf{X}$. This single matrix $\mathbf{P}$ encapsulates the entire journey from the 3D world to a 2D pixel.
+
+\section*{Slide 19: Lens Distortion Models}
+
+Real lenses bend light. Barrel distortion is an \textbf{issue} with wide-angle lenses where straight lines curve outward. We correct this using polynomial coefficients.
+
+\section*{Slide 20: Camera Calibration Overview}
+
+Using Zhang's method, we find $\mathbf{K}$ by showing the camera a checkerboard. The \textbf{advantage} is that it's easy; the \textbf{disadvantage} is that it requires high-quality corner detection to be accurate.
+
+\section*{Slides 21--24: Examples (Zoom, Pose, Ambiguity)}
+These slides walk through numerical examples.
+\begin{itemize}
+    \item \textbf{Slide 21:} Doubling focal length doubles object size.
+    \item \textbf{Slide 22:} Rotating the camera shifts the vanishing point.
+    \item \textbf{Slide 23-24:} The Depth Ambiguity problem. A single image cannot tell if a circle is a small coin nearby or a giant moon far away.
+\end{itemize}
+
+\section*{Slide 25: Applications}
+We conclude by looking at SLAM and AR. This geometry is what allows a virtual character to "sit" correctly on a real-world table in an AR app.
+
+\end{document}

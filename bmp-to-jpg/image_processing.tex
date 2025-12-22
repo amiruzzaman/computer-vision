@@ -1,0 +1,243 @@
+\documentclass{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{bm}
+
+\title{Introduction to Computer Vision}
+\subtitle{Image Processing Fundamentals}
+\author{Dr.\ Amir}
+\institute{Department of Computer Science}
+%\date{\today}
+\date{}
+
+\begin{document}
+
+%------------------------------------------------
+\begin{frame}
+\titlepage
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Lecture Outline}
+\tableofcontents
+\end{frame}
+
+%------------------------------------------------
+\section{What Is Computer Vision}
+
+\begin{frame}{Computer Vision}
+\begin{itemize}
+    \item Computer Vision enables machines to \textbf{see, analyze, and understand images}
+    \item Core tasks:
+    \begin{itemize}
+        \item Image processing
+        \item Feature extraction
+        \item Object detection
+        \item Image classification
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Image as a Numerical Signal}
+
+\begin{frame}{Image as a Matrix}
+\begin{itemize}
+    \item A grayscale image is a 2D matrix:
+\end{itemize}
+
+\[
+I(x,y) \in [0, 255]
+\]
+
+\[
+\bm{I} =
+\begin{bmatrix}
+52 & 55 & 61 \\
+63 & 59 & 55 \\
+70 & 61 & 64
+\end{bmatrix}
+\]
+
+\begin{itemize}
+    \item Each value represents pixel intensity
+    \item Color images use 3 channels (RGB)
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Color Images}
+\[
+\bm{I}(x,y) = \begin{bmatrix}
+R(x,y) \\
+G(x,y) \\
+B(x,y)
+\end{bmatrix}
+\]
+
+\begin{itemize}
+    \item Each channel is a matrix
+    \item Stored as a 3D array: height × width × 3
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Image Filtering}
+
+\begin{frame}{Image Filtering}
+\begin{itemize}
+    \item Filtering modifies pixel values using neighbors
+    \item Used for:
+    \begin{itemize}
+        \item Noise reduction
+        \item Smoothing
+        \item Edge enhancement
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Convolution Operation}
+\[
+I'(x,y) = \sum_{i=-k}^{k} \sum_{j=-k}^{k} I(x+i, y+j)\,K(i,j)
+\]
+
+\begin{itemize}
+    \item $K$ is a kernel (filter)
+    \item Applied to every pixel
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Common Filters}
+\textbf{Mean Filter}
+\[
+K = \frac{1}{9}
+\begin{bmatrix}
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+1 & 1 & 1
+\end{bmatrix}
+\]
+
+\vspace{0.3cm}
+
+\textbf{Gaussian Filter}
+\[
+G(x,y) = \frac{1}{2\pi\sigma^2}
+e^{-\frac{x^2+y^2}{2\sigma^2}}
+\]
+\end{frame}
+
+%------------------------------------------------
+\section{Edge Detection}
+
+\begin{frame}{Edges in Images}
+\begin{itemize}
+    \item Edges correspond to \textbf{intensity changes}
+    \item Detected using image gradients
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Image Gradient}
+\[
+\nabla I =
+\begin{bmatrix}
+\frac{\partial I}{\partial x} \\
+\frac{\partial I}{\partial y}
+\end{bmatrix}
+\]
+
+\[
+|\nabla I| = \sqrt{G_x^2 + G_y^2}
+\]
+
+\begin{itemize}
+    \item High gradient magnitude $\Rightarrow$ edge
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Sobel Operator}
+\[
+G_x =
+\begin{bmatrix}
+-1 & 0 & 1 \\
+-2 & 0 & 2 \\
+-1 & 0 & 1
+\end{bmatrix}
+\quad
+G_y =
+\begin{bmatrix}
+-1 & -2 & -1 \\
+0 & 0 & 0 \\
+1 & 2 & 1
+\end{bmatrix}
+\]
+
+\begin{itemize}
+    \item Approximates image derivatives
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Image Classification}
+
+\begin{frame}{What Is Image Classification?}
+\begin{itemize}
+    \item Assigning a label to an image
+    \item Examples:
+    \begin{itemize}
+        \item Cat vs Dog
+        \item Tumor vs Normal
+        \item Road sign recognition
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Image as Feature Vector}
+\begin{itemize}
+    \item Image is flattened into a vector:
+\end{itemize}
+
+\[
+\bm{x} = [p_1, p_2, \dots, p_n]
+\]
+
+\begin{itemize}
+    \item Classifier learns mapping:
+\end{itemize}
+
+\[
+f(\bm{x}) = y
+\]
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Classification Pipeline}
+\begin{enumerate}
+    \item Image acquisition
+    \item Preprocessing
+    \item Feature extraction
+    \item Classification model
+\end{enumerate}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Summary}
+\begin{itemize}
+    \item Images are numerical matrices
+    \item Filtering modifies local neighborhoods
+    \item Edges are detected via gradients
+    \item Classification assigns semantic meaning
+\end{itemize}
+\end{frame}
+
+\end{document}

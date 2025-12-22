@@ -3,3 +3,7 @@ https://16385.courses.cs.cmu.edu/fall2022/lecture/intro/slide_034
 https://graphics.stanford.edu/courses/cs205a-13-fall/assets/notes/cs205a_notes.pdf
 https://www.cis.upenn.edu/~cis5150/linalg-I-f.pdf
 https://inria.hal.science/cel-02129241/file/poly_3D_eng.pdf
+https://courses.cs.washington.edu/courses/cse457/22au/assets/slides/image-processing.pptx.pdf
+
+image
+https://www.cs.cmu.edu/afs/cs/academic/class/15385-s06/lectures/ppts/

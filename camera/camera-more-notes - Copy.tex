@@ -1,0 +1,246 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{setspace}
+
+\onehalfspacing
+
+\title{\textbf{Camera Geometry in Computer Vision}\\
+\large Enhanced Lecture Notes with Motivation, Advantages, and Big Picture}
+\author{ }
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction: Why Camera Geometry?}
+
+Camera geometry is one of the most elegant and foundational mathematical models in computer vision. Every photograph, augmented reality filter, and autonomous driving system relies on this transformation. The camera acts as a \emph{digital eye}, and understanding its geometry is equivalent to understanding how machines perceive the world.
+
+This is not merely theoretical knowledge. Modern applications such as portrait mode photography, Google Street View panorama stitching, and Snapchat face filters all depend on accurate camera models. While modern systems often incorporate deep learning, they are still grounded in the geometric principles discussed in these notes.
+
+\section{Lecture Roadmap}
+
+This lecture proceeds as follows:
+\begin{enumerate}
+    \item Coordinate systems and frames of reference
+    \item Mathematical representation of camera motion
+    \item Homogeneous coordinates
+    \item Intrinsic and extrinsic camera parameters
+    \item Perspective projection and the pinhole camera model
+\end{enumerate}
+
+A key insight is that homogeneous coordinates transform nonlinear perspective division into linear algebra, allowing efficient computation, composition, and optimization.
+
+\section{Why Separate Geometry from Appearance?}
+
+Geometry describes \emph{where} objects are in the world, while appearance describes \emph{how} they look. A red apple under different lighting conditions may change in color and texture, but its 3D position remains constant.
+
+Separating geometry from appearance enables robust vision systems that function even under poor lighting or texture-less conditions.
+
+\subsection*{Key Advantages}
+
+\begin{itemize}
+    \item \textbf{Robustness:} Geometry is invariant to lighting and color.
+    \item \textbf{Generality:} Works for objects never seen during training.
+    \item \textbf{Precision:} Enables millimeter-level measurements from pixels.
+    \item \textbf{Scalability:} Many problems are linear or convex.
+\end{itemize}
+
+\section{Coordinate Systems}
+
+Why do we use multiple coordinate systems? The answer is \emph{separation of concerns}. Each coordinate system serves a specific purpose:
+
+\begin{itemize}
+    \item \textbf{World coordinates:} Global reference frame (e.g., GPS-based).
+    \item \textbf{Camera coordinates:} Camera located at the origin, facing the $Z$-axis.
+    \item \textbf{Image coordinates:} Metric coordinates on the sensor plane.
+    \item \textbf{Pixel coordinates:} Discrete grid stored in memory.
+\end{itemize}
+
+This modular design allows changes to camera hardware, pose, or resolution without modifying the entire system.
+
+\section{Rigid Transformations}
+
+Cameras are rigid bodies. When a camera moves, it rotates and translates without stretching or shearing space. This constraint dramatically reduces the number of parameters required to describe motion.
+
+\[
+\mathbf{X}_c = R \mathbf{X}_w + \mathbf{t}
+\]
+
+Here, $R \in SO(3)$ is a rotation matrix and $\mathbf{t} \in \mathbb{R}^3$ is a translation vector.
+
+\subsection*{Mathematical Insight}
+
+Rotation matrices satisfy the orthogonality constraint:
+\[
+R^T R = I
+\]
+
+This ensures physically valid transformations and leads to well-behaved optimization problems.
+
+\section{Rotation Representations}
+
+Different rotation representations have different tradeoffs:
+
+\begin{itemize}
+    \item \textbf{Rotation matrices:} Easy composition and linear algebra operations, but overparameterized.
+    \item \textbf{Euler angles:} Intuitive for humans, but suffer from gimbal lock.
+    \item \textbf{Quaternions:} Avoid singularities and enable smooth interpolation.
+\end{itemize}
+
+Choosing the correct representation is critical for numerical stability in optimization and real-time systems.
+
+\section{Properties of Rotation Matrices}
+
+Rotation matrices provide computational advantages beyond physical correctness:
+\begin{itemize}
+    \item Inverse equals transpose: $R^{-1} = R^T$
+    \item Determinant constraint: $\det(R) = 1$
+\end{itemize}
+
+The determinant condition prevents reflections, ensuring the camera does not become physically inverted.
+
+\section{Why Homogeneous Coordinates?}
+
+Perspective projection is inherently nonlinear due to division by depth ($Z$). Homogeneous coordinates linearize this operation by embedding 3D points into a higher-dimensional space.
+
+\subsection*{Advantages}
+
+\begin{itemize}
+    \item Converts division into matrix multiplication
+    \item Enables composition of transformations
+    \item Supports points at infinity ($w = 0$)
+\end{itemize}
+
+This mathematical trick is foundational in computer graphics and vision.
+
+\section{Homogeneous Coordinate Examples}
+
+Parallel lines intersect at infinity in perspective projection. While undefined in Euclidean space, these intersections are naturally represented using homogeneous coordinates.
+
+This unified representation enables algorithms to handle finite points, directions, and vanishing points without special cases.
+
+\section{Projective Transformations}
+
+Camera transformations are represented entirely using matrices:
+\[
+\mathbf{x} = P \mathbf{X}
+\]
+
+This allows the use of powerful linear algebra tools such as least squares, singular value decomposition (SVD), and eigenvalue methods for camera calibration and 3D reconstruction.
+
+The rigid transformation matrix belongs to the group $SE(3)$, the smallest group capable of representing rotation and translation while remaining invertible.
+
+\section{Intrinsic Camera Matrix}
+
+The intrinsic matrix $K$ encodes camera-specific parameters:
+\[
+K =
+\begin{bmatrix}
+f_x & s & c_x \\
+0 & f_y & c_y \\
+0 & 0 & 1
+\end{bmatrix}
+\]
+
+\subsection*{Why This Parameterization?}
+
+\begin{itemize}
+    \item Pixels may not be square ($f_x \neq f_y$)
+    \item Optical center may not be perfectly centered
+    \item Skew models sensor misalignment
+\end{itemize}
+
+This model generalizes across consumer phones, webcams, and industrial cameras.
+
+\section{Focal Length Interpretation}
+
+Physical focal length (in millimeters) differs from pixel focal length ($f_x, f_y$), which directly relates image measurements to angular changes in the world.
+
+Long focal lengths provide narrow fields of view with less distortion, while short focal lengths provide wide views at the cost of distortion.
+
+\section{Pinhole Camera Model}
+
+The pinhole model arises from similar triangles:
+\[
+x = \frac{fX}{Z}, \quad y = \frac{fY}{Z}
+\]
+
+Despite its simplicity, this model accurately approximates most real cameras when combined with lens distortion correction.
+
+\section{Complete Projection Pipeline}
+
+The full camera projection is given by:
+\[
+P = K [R \mid t]
+\]
+
+\subsection*{Why This Decomposition Matters}
+
+\begin{itemize}
+    \item $K$ depends only on the camera
+    \item $R,t$ depend only on camera pose
+    \item Calibration can be performed once
+\end{itemize}
+
+This modularity allows the same algorithms to work across different devices.
+
+\section{Lens Distortion Models}
+
+Real lenses deviate from the pinhole model. Radial and tangential distortion are commonly modeled using low-order polynomials.
+
+\subsection*{Advantages}
+
+\begin{itemize}
+    \item Captures most real lens behavior with few parameters
+    \item Computationally efficient
+    \item Invertible for real-time correction
+\end{itemize}
+
+\section{Camera Calibration}
+
+Zhang's calibration method uses planar patterns such as checkerboards. Each view provides a homography:
+\[
+H = K [r_1 \ r_2 \ t]
+\]
+
+Stacking multiple views yields enough constraints to solve for intrinsic and extrinsic parameters without expensive 3D calibration rigs.
+
+\section{Applications}
+
+Camera geometry underlies:
+\begin{itemize}
+    \item Augmented and virtual reality
+    \item Structure from motion (SfM)
+    \item Simultaneous localization and mapping (SLAM)
+    \item Autonomous driving
+\end{itemize}
+
+These techniques have become practical due to modern mobile hardware and efficient algorithms.
+
+\section{Big Picture: Why This Matters}
+
+\subsection*{Mathematical Elegance}
+Physical insight leads to elegant mathematical representations and efficient algorithms.
+
+\subsection*{Practical Impact}
+Everyday technologies rely on these geometric foundations.
+
+\subsection*{Transferable Skills}
+Students learn how to model physical systems, choose representations, and validate models with real data.
+
+\subsection*{Research Foundation}
+Modern research areas such as neural radiance fields and differentiable rendering build directly on classical camera models.
+
+\section{Final Thought}
+
+Camera geometry is where physics, mathematics, and computation intersect. Mastery of this topic enables a deep understanding of how machines see the world and prepares students for both research and industry applications.
+
+\end{document}

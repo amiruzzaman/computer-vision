@@ -1,0 +1,644 @@
+\documentclass{beamer}
+
+% Theme and packages
+\usetheme{Madrid}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+% Use natbib for compatibility with beamer
+\usepackage{natbib}
+
+%\nobibliography*
+
+% Title information
+\title[Camera Geometry]{Intrinsic and Extrinsic Parameters\\Rigid Transformations, Homogeneous Coordinates,\\and Perspective Projection}
+\author{Amir}
+\institute{}
+\date{}
+
+\begin{document}
+
+
+%------------------------------------------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Lecture Outline}
+\begin{itemize}
+  \item Camera models and coordinate systems
+  \item Rigid transformations in 3D (detailed)
+  \item Homogeneous coordinates and projective geometry
+  \item Intrinsic and extrinsic camera parameters
+  \item Perspective projection model
+  \item Lens distortion models
+  \item Camera calibration overview
+  \item Advanced examples and applications
+  \item Discussion questions
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[fragile]{Extrinsic Camera Parameters}
+  \begin{itemize}
+    \item \textbf{Definition:} Parameters that define the location and orientation of the camera coordinate system with respect to the world coordinate system.
+    \item \textbf{Components:}
+    \begin{itemize}
+      \item \textbf{Rotation matrix ($\mathbf{R}$):} Describes the camera's orientation (3 degrees of freedom).
+      \item \textbf{Translation vector ($\mathbf{t}$):} Describes the position of the camera center (3 degrees of freedom).
+    \end{itemize}
+    \item \textbf{Transformation:} $\mathbf{X}_c = \mathbf{R}\mathbf{X}_w + \mathbf{t}$
+  \end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}[fragile]{Intrinsic Camera Parameters}
+  \begin{itemize}
+    \item \textbf{Definition:} Internal characteristics of the camera that map the 3D camera coordinates to 2D pixel coordinates.
+    \item \textbf{Intrinsic Matrix ($\mathbf{K}$):}
+    \[
+    \mathbf{K} = \begin{bmatrix} f_x & s & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix}
+    \]
+    \item \textbf{Key Components:}
+    \begin{itemize}
+      \item $f_x, f_y$: Focal lengths in pixels.
+      \item $c_x, c_y$: Principal point coordinates.
+      \item $s$: Skew coefficient (usually 0).
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+%------------------------------------------------
+\section{Camera Geometry Basics}
+
+\begin{frame}{Why Camera Geometry?}
+\begin{itemize}
+  \item Relates 3D world points to 2D image measurements
+  \item Foundation of computer vision tasks:
+  \begin{itemize}
+    \item Camera calibration \citep{Zhang2000}
+    \item 3D reconstruction \citep{Hartley2004}
+    \item Visual odometry and SLAM \citep{Davison2007}
+    \item Augmented reality
+  \end{itemize}
+  \item Separates \emph{geometry} from \emph{appearance}
+  \item Enables metric measurements from images
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Key Insight:} A camera is a function $f: \mathbb{R}^3 \rightarrow \mathbb{R}^2$ that loses depth information.
+\end{frame}
+
+%--------Red-Apple----------------------------
+
+\begin{frame}{Red apple}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.55\textwidth]{red-apple} % Use example-image for testing
+    \caption{Photogrammetric dense reconstruction of an apple fruit (a), the highlighted point density of the 3D fruit (ca 0.16 mm) (b) and the apple sliced to find the maximum cross-section diameter (c).}
+  \end{figure}
+  
+  \vfill
+  
+  \begin{block}{Reference}
+    \footnotesize
+    \textbf{Grilli, E., Battisti, R., \& Remondino, F. (2021).}\\
+    An advanced photogrammetric solution to measure apples.\\
+    \textit{Remote Sensing}, 13(19), 3960.\\
+    DOI: 10.3390/rs13193960
+  \end{block}
+\end{frame}
+
+
+%------------------------------------------------
+\begin{frame}{Coordinate Systems in Detail}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+  \item \textbf{World coordinates} $(X_w, Y_w, Z_w)$: Fixed reference frame
+  \item \textbf{Camera coordinates} $(X_c, Y_c, Z_c)$: Origin at optical center
+  \item \textbf{Image coordinates} $(x, y)$: Metric coordinates in image plane
+  \item \textbf{Pixel coordinates} $(u, v)$: Integer pixel locations
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\includegraphics[width=\textwidth]{world_and_camera_coordinates_2.png}
+\caption{Camera coordinate systems \citep{Szeliski2011}}
+\end{figure}
+\end{column}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Rigid Transformation}
+  \begin{itemize}
+    \item \textbf{Definition:} A mapping $g: \mathbb{R}^3 \rightarrow \mathbb{R}^3$ that preserves the Euclidean distance between all points \citep{Szeliski2011}.
+    \item \textbf{Key Characteristics:}
+    \begin{itemize}
+      \item $\|g(\mathbf{X}) - g(\mathbf{Y})\| = \|\mathbf{X} - \mathbf{Y}\| \quad \forall \mathbf{X}, \mathbf{Y} \in \mathbb{R}^3$ \citep{Szeliski2011}.
+      \item Does not include scaling or reflection; only rotation and translation \citep{Szeliski2011}.
+    \end{itemize}
+    \item \textbf{Matrix Representation:}
+    \[ \mathbf{X}_c = \mathbf{R}\mathbf{X}_w + \mathbf{t} \]
+    where $\mathbf{R} \in SO(3)$ is a $3\times3$ rotation matrix and $\mathbf{t} \in \mathbb{R}^3$ is a translation vector \citep{Szeliski2011}.
+  \end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Rigid Transformations in Detail}
+
+\begin{frame}{Mathematical Representation of Rigid Transformations}
+\textbf{Rigid Transformation:} A mapping $g: \mathbb{R}^3 \rightarrow \mathbb{R}^3$ such that:
+\[
+\|g(\mathbf{X}) - g(\mathbf{Y})\| = \|\mathbf{X} - \mathbf{Y}\| \quad \forall \mathbf{X}, \mathbf{Y} \in \mathbb{R}^3
+\]
+
+\vspace{0.3cm}
+\textbf{Matrix Representation:}
+\[
+\mathbf{X}_c = \mathbf{R}\mathbf{X}_w + \mathbf{t}
+\]
+where:
+\begin{itemize}
+  \item $\mathbf{R} \in SO(3)$: Rotation matrix (3×3)
+  \item $\mathbf{t} \in \mathbb{R}^3$: Translation vector
+  \item $SO(3) = \{\mathbf{R} \in \mathbb{R}^{3\times3} : \mathbf{R}^T\mathbf{R} = \mathbf{I}, \det(\mathbf{R}) = 1\}$
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Rotation Representations}
+Three common representations of rotation:
+
+\begin{enumerate}
+  \item \textbf{Rotation Matrices} (9 parameters with 6 constraints)
+  \[
+  \mathbf{R} = \begin{bmatrix}
+  r_{11} & r_{12} & r_{13} \\
+  r_{21} & r_{22} & r_{23} \\
+  r_{31} & r_{32} & r_{33}
+  \end{bmatrix}
+  \]
+
+  \item \textbf{Euler Angles} (3 parameters: yaw, pitch, roll)
+  \[
+  \mathbf{R} = \mathbf{R}_z(\gamma)\mathbf{R}_y(\beta)\mathbf{R}_x(\alpha)
+  \]
+
+  \item \textbf{Axis-Angle and Quaternions} (4 parameters, no singularities)
+  \[
+  \mathbf{q} = [\cos(\theta/2), \mathbf{v}\sin(\theta/2)]
+  \]
+\end{enumerate}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Properties of Rotation Matrices}
+For any rotation matrix $\mathbf{R}$:
+
+\begin{theorem}[Orthogonality]
+\[
+\mathbf{R}^T\mathbf{R} = \mathbf{R}\mathbf{R}^T = \mathbf{I}
+\]
+\end{theorem}
+
+\begin{theorem}[Determinant]
+\[
+\det(\mathbf{R}) = 1
+\]
+\end{theorem}
+
+\begin{theorem}[Inverse]
+\[
+\mathbf{R}^{-1} = \mathbf{R}^T
+\]
+\end{theorem}
+
+\vspace{0.3cm}
+\textbf{Geometric Interpretation:} Columns of $\mathbf{R}$ are the world axes expressed in camera coordinates.
+\end{frame}
+
+
+%------------------------------------------------
+\begin{frame}{Why Homogeneous Coordinates?}
+  \begin{block}{Definition}
+    A system of coordinates used in projective geometry where a point in $n$-dimensional space is represented by a vector of $n+1$ components. For a 2D point $(x, y)$, the homogeneous representation is $(wx, wy, w)$ for any $w \neq 0$.
+  \end{block}
+
+  \begin{itemize}
+    \item \textbf{Linearization:} Perspective projection is non-linear in Euclidean space due to division by $Z$. Homogeneous coordinates allow us to represent this as a linear matrix multiplication.
+    \item \textbf{Unified Framework:} Translation, rotation, and scaling can all be combined into a single $4 \times 4$ matrix operation.
+    \item \textbf{Points at Infinity:} Allows for the mathematical representation of vanishing points where $w=0$.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\section{Homogeneous Coordinates and Projective Geometry}
+
+\begin{frame}{Why Homogeneous Coordinates?}
+\begin{itemize}
+  \item \textbf{Unify linear and non-linear transformations}
+  \item \textbf{Handle points at infinity} (ideal points)
+  \item \textbf{Simplify perspective projection} to matrix multiplication
+  \item \textbf{Enable projective geometry} framework
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Definition:} For $\mathbb{R}^n$, homogeneous coordinates in $\mathbb{P}^n$:
+\[
+(x_1, x_2, \ldots, x_n) \mapsto (x_1, x_2, \ldots, x_n, 1)
+\]
+with equivalence relation $(x_1, \ldots, x_{n+1}) \sim \lambda(x_1, \ldots, x_{n+1})$ for $\lambda \neq 0$.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Homogeneous Coordinates: Examples}
+\begin{example}[3D Point]
+Euclidean: $(X, Y, Z)$ \\
+Homogeneous: $(X, Y, Z, 1)$ or $(2X, 2Y, 2Z, 2)$
+\end{example}
+
+\begin{example}[2D Image Point]
+Euclidean: $(u, v)$ \\
+Homogeneous: $(u, v, 1)$
+\end{example}
+
+\begin{example}[Point at Infinity]
+Direction vector $(a, b, c)$ in 3D: \\
+Homogeneous: $(a, b, c, 0)$
+\end{example}
+
+\vspace{0.3cm}
+\textbf{Conversion back:} $(x, y, z, w) \mapsto (x/w, y/w, z/w)$ for $w \neq 0$
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Projective Transformations}
+In homogeneous coordinates, all transformations become matrix multiplications:
+
+\begin{itemize}
+  \item \textbf{Rigid transformation:}
+  \[
+  \begin{bmatrix}
+  \mathbf{R} & \mathbf{t} \\
+  \mathbf{0}^T & 1
+  \end{bmatrix}
+  \]
+
+  \item \textbf{Perspective projection:}
+  \[
+  \begin{bmatrix}
+  1 & 0 & 0 & 0 \\
+  0 & 1 & 0 & 0 \\
+  0 & 0 & 1 & 0
+  \end{bmatrix}
+  \]
+
+  \item \textbf{Affine transformation:}
+  \[
+  \begin{bmatrix}
+  \mathbf{A} & \mathbf{t} \\
+  \mathbf{0}^T & 1
+  \end{bmatrix}
+  \]
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Intrinsic Parameters in Detail}
+
+\begin{frame}{Intrinsic Matrix Components}
+The camera intrinsic matrix $\mathbf{K}$:
+\[
+\mathbf{K} =
+\begin{bmatrix}
+ f_x & s   & c_x \\
+ 0   & f_y & c_y \\
+ 0   & 0   & 1
+\end{bmatrix}
+\]
+
+\vspace{0.2cm}
+\textbf{Parameters:}
+\begin{itemize}
+  \item $f_x, f_y$: Focal length in pixels ($f_x = f \cdot m_x$, where $m_x$ pixels/mm)
+  \item $c_x, c_y$: Principal point (image center, ideally)
+  \item $s$: Skew coefficient (usually 0 for modern cameras)
+\end{itemize}
+
+\vspace{0.2cm}
+\textbf{Physical Meaning:} Maps metric image coordinates $(x, y)$ to pixel coordinates $(u, v)$:
+\[
+\begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \mathbf{K} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}
+\]
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Focal Length Interpretation}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\begin{itemize}
+  \item \textbf{Physical focal length} $f$: Distance from lens to image plane
+  \item \textbf{Pixel focal lengths} $f_x, f_y$:
+  \[
+  f_x = \frac{f \cdot \text{width in pixels}}{\text{sensor width in mm}}
+  \]
+  \[
+  f_y = \frac{f \cdot \text{height in pixels}}{\text{sensor height in mm}}
+  \]
+  \item Different $f_x$ and $f_y$ handle non-square pixels
+  \item Field of View (FOV):
+  \[
+  \text{FOV}_x = 2 \arctan\left(\frac{\text{width}}{2f_x}\right)
+  \]
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{figure}
+\includegraphics[width=\textwidth]{Pinhole-camera.svg.png}
+\caption{Pinhole camera model \citep{Hartley2004}}
+\end{figure}
+\end{column}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+\section{Perspective Projection Model}
+
+\begin{frame}{Pinhole Camera Derivation}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+Using similar triangles:
+\[
+\frac{x}{f} = \frac{X_c}{Z_c} \Rightarrow x = f\frac{X_c}{Z_c}
+\]
+\[
+\frac{y}{f} = \frac{Y_c}{Z_c} \Rightarrow y = f\frac{Y_c}{Z_c}
+\]
+
+In homogeneous coordinates:
+\[
+\begin{bmatrix}
+x \\ y \\ 1
+\end{bmatrix}
+\sim
+\begin{bmatrix}
+f & 0 & 0 & 0 \\
+0 & f & 0 & 0 \\
+0 & 0 & 1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+X_c \\ Y_c \\ Z_c \\ 1
+\end{bmatrix}
+\]
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\includegraphics[width=\textwidth]{Pinhole-camera.svg.png}
+\caption{Perspective projection geometry \citep{Szeliski2011}}
+\end{figure}
+\end{column}
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Complete Projection Pipeline}
+The full mapping from 3D world to 2D pixels:
+
+\begin{enumerate}
+  \item \textbf{World to Camera:} Rigid transformation
+  \[
+  \mathbf{X}_c = \mathbf{R}\mathbf{X}_w + \mathbf{t}
+  \]
+
+  \item \textbf{Camera to Image:} Perspective projection
+  \[
+  \mathbf{x} = \frac{1}{Z_c} \begin{bmatrix} X_c \\ Y_c \end{bmatrix}
+  \]
+
+  \item \textbf{Image to Pixels:} Intrinsic transformation
+  \[
+  \mathbf{u} = \mathbf{K}\tilde{\mathbf{x}}
+  \]
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Combined:}
+\[
+\tilde{\mathbf{u}} \sim \underbrace{\mathbf{K}}_{3\times3} \underbrace{[\mathbf{R}|\mathbf{t}]}_{3\times4} \tilde{\mathbf{X}}_w
+\]
+\end{frame}
+
+%------------------------------------------------
+\section{Lens Distortion Models}
+
+\begin{frame}{Real Cameras vs. Ideal Pinhole}
+The pinhole model assumes perfect lenses, but real cameras have distortion:
+
+\begin{itemize}
+  \item \textbf{Radial distortion:} "Barrel" or "pincushion" effects
+  \[
+  x_d = x(1 + k_1 r^2 + k_2 r^4 + k_3 r^6)
+  \]
+  \[
+  y_d = y(1 + k_1 r^2 + k_2 r^4 + k_3 r^6)
+  \]
+  where $r^2 = x^2 + y^2$
+
+  \item \textbf{Tangential distortion:} Lens misalignment
+  \[
+  x_d = x + [2p_1 xy + p_2(r^2 + 2x^2)]
+  \]
+  \[
+  y_d = y + [p_1(r^2 + 2y^2) + 2p_2 xy]
+  \]
+\end{itemize}
+
+\begin{figure}
+\includegraphics[width=0.6\textwidth]{Camera-Lens-distortion.png}
+\caption{Types of lens distortion \citep{Brown1971}}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\section{Camera Calibration Overview}
+
+\begin{frame}{Camera Calibration Process}
+\textbf{Goal:} Estimate $\mathbf{K}$, distortion coefficients, and optionally $\mathbf{R}, \mathbf{t}$
+
+\vspace{0.3cm}
+\textbf{Zhang's Method \citep{Zhang2000}:}
+\begin{enumerate}
+  \item Capture images of a calibration pattern (checkerboard)
+  \item Detect corner points in images
+  \item Solve for homographies between pattern and images
+  \item Estimate intrinsic parameters from homographies
+  \item Refine all parameters using non-linear optimization
+\end{enumerate}
+
+\vspace{0.3cm}
+\textbf{Output:}
+\begin{itemize}
+  \item Intrinsic matrix $\mathbf{K}$
+  \item Distortion coefficients $k_1, k_2, k_3, p_1, p_2$
+  \item For each image: rotation $\mathbf{R}_i$, translation $\mathbf{t}_i$
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Extended Examples}
+
+\begin{frame}{Example 1: Camera with Different Focal Lengths}
+Consider two cameras with same principal point $(320, 240)$ but different focal lengths:
+
+\begin{itemize}
+  \item \textbf{Camera A:} $f_x = f_y = 500$ pixels
+  \item \textbf{Camera B:} $f_x = f_y = 1000$ pixels
+\end{itemize}
+
+A point at $\mathbf{X}_c = (0.1, 0.2, 1.0)$ meters projects to:
+
+\begin{itemize}
+  \item \textbf{Camera A:} $\mathbf{u} = (320 + 500\cdot0.1, 240 + 500\cdot0.2) = (370, 340)$
+  \item \textbf{Camera B:} $\mathbf{u} = (320 + 1000\cdot0.1, 240 + 1000\cdot0.2) = (420, 440)$
+\end{itemize}
+
+\textbf{Observation:} Longer focal length = greater "zoom" = larger projection for same 3D point.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Example 2: Camera Rotation Effect}
+Camera at origin, rotated 30° around Y-axis:
+\[
+\mathbf{R} = \begin{bmatrix}
+\cos30^\circ & 0 & \sin30^\circ \\
+0 & 1 & 0 \\
+-\sin30^\circ & 0 & \cos30^\circ
+\end{bmatrix}
+= \begin{bmatrix}
+0.866 & 0 & 0.5 \\
+0 & 1 & 0 \\
+-0.5 & 0 & 0.866
+\end{bmatrix}
+\]
+
+World point $\mathbf{X}_w = (1, 0, 2)$:
+
+\begin{itemize}
+  \item \textbf{Before rotation:} $\mathbf{X}_c = (1, 0, 2)$
+  \item \textbf{After rotation:} $\mathbf{X}_c = \mathbf{R}\mathbf{X}_w = (0.866\cdot1 + 0.5\cdot2, 0, -0.5\cdot1 + 0.866\cdot2) = (1.866, 0, 1.232)$
+\end{itemize}
+
+\textbf{Observation:} Rotation changes which parts of scene are visible.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Example 3: Depth Ambiguity in Projection}
+The fundamental limitation: Multiple 3D points project to same 2D point.
+
+Consider pinhole projection:
+\[
+(x, y) = \left(f\frac{X}{Z}, f\frac{Y}{Z}\right)
+\]
+
+For any $\lambda > 0$:
+\[
+(\lambda X, \lambda Y, \lambda Z) \mapsto \left(f\frac{\lambda X}{\lambda Z}, f\frac{\lambda Y}{\lambda Z}\right) = (x, y)
+\]
+
+\textbf{Consequence:} Cannot recover absolute scale from single image. Need stereo, motion, or prior knowledge.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Example 4: Principal Point Offset Effect}
+Camera with $f_x = f_y = 800$, but different principal points:
+
+\begin{itemize}
+  \item \textbf{Camera A:} $(c_x, c_y) = (320, 240)$
+  \item \textbf{Camera B:} $(c_x, c_y) = (640, 480)$
+\end{itemize}
+
+Same point $\mathbf{x} = (0.1, 0.2)$ in metric coordinates projects to:
+
+\begin{itemize}
+  \item \textbf{Camera A:} $(320 + 800\cdot0.1, 240 + 800\cdot0.2) = (400, 400)$
+  \item \textbf{Camera B:} $(640 + 800\cdot0.1, 480 + 800\cdot0.2) = (720, 640)$
+\end{itemize}
+
+\textbf{Observation:} Principal point shift translates the entire image.
+\end{frame}
+
+%------------------------------------------------
+\section{Applications and Advanced Topics}
+
+\begin{frame}{Applications of Camera Models}
+\begin{itemize}
+  \item \textbf{Structure from Motion (SfM):} Reconstruct 3D scene from multiple images
+  \item \textbf{Stereo Vision:} Compute depth from two cameras
+  \item \textbf{Augmented Reality:} Overlay virtual objects in real scenes
+  \item \textbf{Photogrammetry:} Create 3D models from photographs
+  \item \textbf{Visual SLAM:} Simultaneous localization and mapping
+  \item \textbf{Camera Tracking:} Match virtual and real camera motions
+\end{itemize}
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{Structure-from-motion.png}
+\caption{Structure from Motion pipeline \citep{Snavely2006}}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+\section{Discussion Questions}
+
+\begin{frame}{Conceptual Questions}
+\begin{enumerate}
+  \item Why do we need separate intrinsic and extrinsic parameters? Could we combine them into one matrix?
+  \item What happens when $Z_c \rightarrow 0$ in perspective projection? How does this relate to the "bas relief ambiguity" in 3D reconstruction?
+  \item How many degrees of freedom does a camera projection matrix have? (Hint: Consider scale ambiguity and constraints)
+  \item Why is camera calibration necessary for metric reconstruction but not for projective reconstruction?
+  \item How does the field of view relate to focal length and sensor size? Give a practical example.
+\end{enumerate}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Mathematical Exercises}
+\begin{enumerate}
+  \item Given $\mathbf{K} = \begin{bmatrix}800&0&320\\0&800&240\\0&0&1\end{bmatrix}$ and $\mathbf{R}=\mathbf{I}, \mathbf{t}=(0,0,0.5)^T$, where does $\mathbf{X}_w=(1,2,3)^T$ project?
+  \item Derive the formula for field of view in terms of focal length and sensor size.
+  \item Show that the cross product of two image points $\mathbf{x}_1 \times \mathbf{x}_2$ gives the line passing through them in homogeneous coordinates.
+  \item Prove that for a rotation matrix, $\|\mathbf{R}\mathbf{v}\| = \|\mathbf{v}\|$ for any vector $\mathbf{v}$.
+\end{enumerate}
+\end{frame}
+
+%------------------------------------------------
+\section*{References}
+
+\begin{frame}[allowframebreaks]{References}
+\footnotesize
+\bibliographystyle{plainnat}
+\bibliography{camera-more} % Changed to match your bib file name
+
+% Suggested additional readings:
+\begin{itemize}
+  \item OpenCV Camera Calibration Tutorial: \url{https://docs.opencv.org/master/dc/dbb/tutorial_py_calibration.html}
+  \item MATLAB Camera Calibration Toolbox: \url{https://www.vision.caltech.edu/bouguetj/calib_doc/}
+  \item Visual Geometry Group, University of Oxford: \url{http://www.robots.ox.ac.uk/~vgg/hzbook/}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+%\begin{frame}
+%\centering
+%\Huge{Questions?}
+%\vspace{1cm}
+%
+%\large{Thank you for your attention!}
+%\end{frame}
+
+\end{document}
