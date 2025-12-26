@@ -1,34 +1,223 @@
 \documentclass{beamer}
+
+% =====================================================
+% THEME & PACKAGES
+% =====================================================
 \usetheme{Madrid}
-\usepackage{natbib}
+\usecolortheme{default}
+
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{booktabs}
+
+% =====================================================
+% TITLE INFORMATION (AS REQUESTED)
+% =====================================================
+\title[Camera Models for Computer Vision]{Mathematical Foundations of Camera Models for Computer Vision}
+\author{Amir}
+\institute{Department of Computer Science}
+\date{} % explicitly no date
 
 \begin{document}
 
-\begin{frame}{Red apple}
-  \begin{figure}
-    \centering
-    \includegraphics[width=0.45\textwidth]{example-image} % Use example-image for testing
-    \caption{Apple measurement study}
-  \end{figure}
-  
-  \vfill
-  
-  \begin{block}{Reference}
-    \footnotesize
-    \textbf{Grilli, E., Battisti, R., \& Remondino, F. (2021).}\\
-    An advanced photogrammetric solution to measure apples.\\
-    \textit{Remote Sensing}, 13(19), 3960.\\
-    DOI: 10.3390/rs13193960
-  \end{block}
+% =====================================================
+% TITLE SLIDE
+% =====================================================
+\begin{frame}
+  \titlepage
 \end{frame}
 
-\begin{frame}{Other Content}
-  Citations work normally: \cite{Zhang2000}
+% =====================================================
+% LEARNING PHILOSOPHY
+% =====================================================
+\begin{frame}{How to Read These Slides}
+These slides are designed as a \textbf{guided tutorial}, not a reference sheet.
+
+\begin{itemize}
+  \item No prior linear algebra is assumed
+  \item Every symbol will be explained
+  \item Every equation will solve a concrete camera problem
+\end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{References}
-  \bibliographystyle{plainnat}
-  \bibliography{camera-more} % Only has Zhang2000, Hartley2004, etc.
+\begin{frame}{Why This Much Detail?}
+Camera models sit at the foundation of computer vision.
+
+\begin{itemize}
+  \item If the camera model is unclear, algorithms appear magical
+  \item If the camera model is clear, algorithms become logical
+\end{itemize}
+
+\medskip
+\textbf{Our goal is understanding, not memorization.}
 \end{frame}
 
-\end{document}
+% =====================================================
+% WHY CAMERAS MATTER FOR CV
+% =====================================================
+\begin{frame}{What Is Computer Vision?}
+Computer vision studies how machines:
+\begin{itemize}
+  \item Receive visual input
+  \item Interpret images and videos
+  \item Make decisions based on visual data
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Where Do Images Come From?}
+\begin{itemize}
+  \item Images are captured by cameras
+  \item Cameras convert light into numbers
+  \item These numbers depend on geometry
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Why Camera Understanding Is Essential}
+Without understanding the camera:
+\begin{itemize}
+  \item Depth is ambiguous
+  \item Scale is misleading
+  \item Motion cannot be inferred reliably
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A Core Problem in Vision}
+\begin{center}
+\textbf{The world is 3D, but images are 2D.}
+\end{center}
+
+This mismatch is the root of many vision challenges.
+\end{frame}
+
+% =====================================================
+% WHY MATHEMATICS IS NEEDED
+% =====================================================
+\begin{frame}{Why Mathematics Is Unavoidable}
+Cameras follow:
+\begin{itemize}
+  \item Physical laws (optics)
+  \item Geometric rules (projection)
+\end{itemize}
+
+\medskip
+Mathematics allows us to express these rules precisely.
+\end{frame}
+
+\begin{frame}{What Goes Wrong Without Math}
+\begin{itemize}
+  \item Same image $\rightarrow$ different possible scenes
+  \item Algorithms fail without explanation
+  \item No way to reason about errors
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What Mathematics Gives Us}
+\begin{itemize}
+  \item Predictability
+  \item Repeatability
+  \item Interpretability
+\end{itemize}
+\end{frame}
+
+% =====================================================
+% SCALARS
+% =====================================================
+\begin{frame}{Scalars: The Simplest Mathematical Objects}
+A \textbf{scalar} is a single number.
+
+Examples:
+\begin{itemize}
+  \item Pixel intensity
+  \item Distance
+  \item Time
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Why Scalars Are Not Enough}
+A camera measurement includes:
+\begin{itemize}
+  \item Horizontal position
+  \item Vertical position
+  \item Depth
+\end{itemize}
+
+\medskip
+One number cannot describe all of this.
+\end{frame}
+
+% =====================================================
+% COORDINATES
+% =====================================================
+\begin{frame}{Coordinates: Describing Position}
+Coordinates answer one question:
+
+\begin{center}
+\textbf{Where is this point?}
+\end{center}
+
+Example in 2D:
+\[
+(x, y)
+\]
+\end{frame}
+
+\begin{frame}{2D Coordinates and Images}
+\begin{itemize}
+  \item Images live on a 2D grid
+  \item Each pixel has an $(x, y)$ location
+\end{itemize}
+\end{frame}
+
+\begin{frame}{3D Coordinates and the Physical World}
+\begin{itemize}
+  \item The real world has depth
+  \item Depth is represented by $z$
+\end{itemize}
+
+\[
+(x, y, z)
+\]
+\end{frame}
+
+% =====================================================
+% VECTORS
+% =====================================================
+\begin{frame}{Vectors: Grouping Numbers Together}
+A \textbf{vector} is an ordered collection of numbers.
+
+\[
+\mathbf{x} =
+\begin{bmatrix}
+x \\
+y
+\end{bmatrix}
+\]
+\end{frame}
+
+\begin{frame}{Why Vectors Matter for Cameras}
+In camera modeling:
+\begin{itemize}
+  \item A point is a vector
+  \item A direction is a vector
+  \item A ray is a vector
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Vector Addition: Motion}
+\[
+\begin{bmatrix}
+1 \\ 2
+\end{bmatrix}
++
+\begin{bmatrix}
+2 \\ 1
+\end{bmatrix}
+=
+\begin{bmatrix}
+3 \\ 3
+\end{bmatrix}
+\]
+
+Used to represent translation.
+\end{frame}

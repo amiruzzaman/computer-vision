@@ -1,0 +1,87 @@
+[
+  {
+    "year": 1943,
+    "model": "First Neural Network (McCulloch–Pitts Neuron)",
+	"text": "First Neural Network Model (McCulloch–Pitts Neuron)",
+    "inventor": ["Walter Pitts", "Warren McCulloch"]
+  },
+  {
+    "year": 1957,
+    "model": "Perceptron",
+    "inventor": ["Frank Rosenblatt"]
+  },
+  {
+    "year": 1960,
+    "model": "Backpropagation (early formulation)",
+	"text": "Backpropagation Model (early formulation)",
+    "inventor": ["Henry J. Kelley"]
+  },
+  {
+    "year": 1979,
+    "model": "Neocognitron",
+    "inventor": ["Kunihiko Fukushima"]
+  },
+  {
+    "year": 1985,
+    "model": "Backpropagation (popularized)",
+	"text": "Backpropagation Algorithm (popularized)",
+    "inventor": null
+  },
+  {
+    "year": 1998,
+    "model": "LeNet",
+	"text": "LeNet (CNN for handwritten digit recognition)",
+    "inventor": ["Yann LeCun"]
+  },
+  {
+    "year": 2012,
+    "model": "AlexNet",
+    "inventor": ["Alex Krizhevsky", "Ilya Sutskever", "Geoffrey Hinton"]
+  },
+  {
+    "year": 2017,
+    "model": "Transformer",
+    "inventor": ["Ashish Vaswani", "Noam Shazeer", "Niki Parmar", "Jakob Uszkoreit", "Llion Jones", "Aidan N. Gomez", "Łukasz Kaiser", "Illia Polosukhin"]
+  },
+  {
+    "year": 2018,
+    "model": "BERT",
+    "inventor": ["Jacob Devlin", "Ming-Wei Chang", "Kenton Lee", "Kristina Toutanova"]
+  },
+  {
+    "year": 2019,
+    "model": "GPT-2",
+    "inventor": ["OpenAI"]
+  },
+  {
+    "year": 2020,
+    "model": "GPT-3",
+    "inventor": ["OpenAI"]
+  },
+  {
+    "year": 2021,
+    "model": "CLIP",
+    "inventor": ["OpenAI"]
+  },
+  {
+    "year": 2022,
+    "model": "DALL·E 2",
+    "inventor": ["OpenAI"]
+  },
+  {
+    "year": 2023,
+    "model": "GPT-4",
+    "inventor": ["OpenAI"]
+  },
+  {
+    "year": 2024,
+    "model": "Gemini",
+    "inventor": ["Google DeepMind"]
+  },
+  {
+    "year": 2025,
+    "model": "Large Unified Models",
+	"text": "Multimodal Foundation Models (Large Unified Models)",
+    "inventor": null
+  }
+]

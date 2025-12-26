@@ -1,0 +1,253 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\begin{document}
+
+\section*{Lecture Narration: Light and Shading}
+
+\textbf{Slide 1: Light and shading}\\
+“Today we begin our discussion on light and shading. This is a 17th-century still life painting where we can observe how light creates brightness and shadow on surfaces. In computer vision, we aim to understand how light is captured by a camera to form an image.”
+
+\vspace{5mm}
+
+\textbf{Slide 2: Image formation}\\
+“The process of image formation is complex. The brightness of an image pixel is determined by multiple factors: the distribution and properties of light sources, sensor properties, exposure, optics, surface reflectance properties, and surface shape and orientation. Together, these elements define what we see in an image.”
+
+\vspace{5mm}
+
+\textbf{Slide 3: Outline}\\
+“In this lecture, we will cover: a brief introduction to radiometry, the in-camera transformation of light, surface reflectance properties, diffuse and specular reflection, shape from shading, and estimating the direction of light sources.”
+
+\vspace{5mm}
+
+\textbf{Slide 4: Radiometry of image formation}\\
+“We start with two key radiometric concepts: \emph{Irradiance}, which is the energy arriving at a surface per unit area, and \emph{Radiance}, which is the energy carried by a ray—the power per unit area per unit solid angle. Understanding the relationship between irradiance \(E\) and radiance \(L\) is essential.”
+
+\vspace{5mm}
+
+\textbf{Slide 5: Fundamental radiometric relation}\\
+“Image irradiance \(E\) is linearly related to scene radiance \(L\). It is proportional to the lens area and inversely proportional to the squared distance from the lens to the image plane. The irradiance also decreases as the angle \(\alpha\) between the viewing ray and optical axis increases, following a \(\cos^4\) relationship.”
+
+\vspace{5mm}
+
+\textbf{Slide 6: Fundamental radiometric relation (cont.)}\\
+“The equation \(E = \left[ \frac{\pi}{4} \left( \frac{d}{f} \right)^2 \cos^4 \alpha \right] L\) summarizes this relationship. This model is used in calibration tasks, such as calibrating a camera using a flat Lambertian surface.”
+
+\vspace{5mm}
+
+\textbf{Slide 7: From light rays to pixel values}\\
+“Here we see how light is transformed into pixel values. Scene radiance \(L\) becomes sensor irradiance \(E\), then exposure \(X\), then analog voltages, and finally digital values \(Z\). The \emph{camera response function} \(f\) maps irradiance to pixel values—critical for HDR imaging and reflectance estimation.”
+
+\vspace{5mm}
+
+\textbf{Slide 8: Outline (recap)}\\
+“Let’s recap: we’ve covered radiometry and in-camera transformations. Next, we will discuss the reflectance properties of surfaces.”
+
+\vspace{5mm}
+
+\textbf{Slide 9: Recall: Image formation}\\
+“Again, what determines pixel brightness? Light sources, sensor properties, exposure, optics, surface reflectance, and surface shape. Today, we focus on surface reflectance.”
+
+\vspace{5mm}
+
+\textbf{Slide 10: What can happen to light when it hits a surface?}\\
+“When light strikes a surface, several things can happen: reflection, transmission, absorption, scattering, and more. We’ll start with basic reflection models.”
+
+\vspace{5mm}
+
+\textbf{Slide 11: Basic models of reflection}\\
+“Two fundamental reflection types: \emph{specular reflection}, where light reflects sharply around the surface normal, and \emph{diffuse reflection}, where light scatters equally in all directions. Think of a mirror vs. a matte wall.”
+
+\vspace{5mm}
+
+\textbf{Slide 12: Other possible effects}\\
+“Beyond reflection, light can also be transmitted through a surface, leading to \emph{refraction}. Transparency and translucency are important effects in realistic rendering.”
+
+\vspace{5mm}
+
+\textbf{Slide 13: Other possible effects (cont.)}\\
+“Another important phenomenon is \emph{subsurface scattering}, where light enters a material, scatters internally, and exits at a different point. This is common in materials like skin, wax, and marble.”
+
+\vspace{5mm}
+
+\textbf{Slide 14: Other possible effects (cont.)}\\
+“We also have \emph{fluorescence} and \emph{phosphorescence}, where materials absorb light at one wavelength and re-emit it at another, sometimes with a time delay. These effects are used in special lighting and sensing applications.”
+
+\vspace{5mm}
+
+\textbf{Slide 15: Bidirectional reflectance distribution function (BRDF)}\\
+“The BRDF describes how bright a surface appears from a given viewing direction when lit from a specific incident direction. It is a function of four angles: incident and outgoing zenith and azimuth angles \(\theta_i, \phi_i, \theta_e, \phi_e\).”
+
+\vspace{5mm}
+
+\textbf{Slide 16: BRDF (cont.)}\\
+“In simple terms: BRDF is the ratio of outgoing radiance to incoming irradiance. It can be incredibly complex for real-world materials, but we often simplify it for computational efficiency.”
+
+\vspace{5mm}
+
+\textbf{Slide 17: Diffuse reflectance}\\
+“Diffuse reflectance means light scatters uniformly in all directions. Examples include brick, matte plastic, and rough wood. This is also called \emph{Lambertian reflectance}.”
+
+\vspace{5mm}
+
+\textbf{Slide 18: Diffuse reflectance (cont.)}\\
+“Diffuse reflection occurs due to microscopic surface irregularities—\emph{microfacets}—that scatter incoming light randomly. This leads to a uniform appearance from all viewing angles.”
+
+\vspace{5mm}
+
+\textbf{Slide 19: Diffuse reflectance (cont.)}\\
+“For a fixed incident angle, the BRDF of a diffuse surface is constant. But if we change the incident angle, the total reflected energy changes. This is described by Lambert’s law.”
+
+\vspace{5mm}
+
+\textbf{Slide 20: Why do we care about diffuse reflectance?}\\
+“Diffuse surfaces appear the same from different camera positions under the same lighting. Specular surfaces, however, change dramatically. This consistency makes diffuse reflectance easier to model and analyze.”
+
+\vspace{5mm}
+
+\textbf{Slide 21: Diffuse reflectance: Lambert's law}\\
+“Lambert’s law states: \(I = \rho (S \cdot N) = \rho \|S\| \cos \theta\), where \(I\) is reflected intensity, \(\rho\) is albedo, \(S\) is the light direction vector, and \(N\) is the surface normal. This is the foundation of shape-from-shading.”
+
+\vspace{5mm}
+
+\textbf{Slide 22: Outline (continued)}\\
+“We’ve covered reflectance. Now, we move to \emph{shape from shading}: recovering 3D shape from brightness variations in an image.”
+
+\vspace{5mm}
+
+\textbf{Slide 23: Photometric stereo, or shape from shading}\\
+“Can we reconstruct shape from shading cues? This question has been explored since the Renaissance—here in Luca della Robbia’s relief, shading gives us a strong sense of depth.”
+
+\vspace{5mm}
+
+\textbf{Slide 24: Photometric stereo}\\
+“Assuming a Lambertian surface, given intensity \(I\), can we recover light direction \(S\) and surface normal \(N\)? And can we do it from a single image? The equation \(I = \rho (S \cdot N)\) is our starting point.”
+
+\vspace{5mm}
+
+\textbf{Slide 25: Shape from shading ambiguity}\\
+“From a single image, shape from shading is inherently ambiguous. The same intensity can result from different combinations of surface orientation, lighting, and albedo.”
+
+\vspace{5mm}
+
+\textbf{Slide 26: Shape from shading ambiguity (cont.)}\\
+“Humans resolve this ambiguity using prior assumptions, such as that light comes from above. Contextual cues like atmospheric perspective also help infer shape and distance.”
+
+\vspace{5mm}
+
+\textbf{Slide 27: Outline (recap)}\\
+“We’re now focused on shape from shading. Next, we’ll see how to solve for shape using multiple images: \emph{photometric stereo}.”
+
+\vspace{5mm}
+
+\textbf{Slide 28: Review: Lambert's law}\\
+“Recall: \(I = \rho (S \cdot N)\). Observed brightness depends on albedo \(\rho\), light direction \(S\), and surface normal \(N\).”
+
+\vspace{5mm}
+
+\textbf{Slide 29: Photometric stereo assumptions}\\
+“Photometric stereo uses multiple images under different known light directions. Assumptions: Lambertian surface, local shading, known lights, fixed camera, and orthographic projection. Goal: recover shape and albedo.”
+
+\vspace{5mm}
+
+\textbf{Slide 30: Synthetic example}\\
+“Here’s a synthetic example: from input images under different lights, we recover albedo, normals, and finally a 3D surface model.”
+
+\vspace{5mm}
+
+\textbf{Slide 31: Image model}\\
+“Known: light source vectors \(S_j\) and pixel intensities \(I_j\). Unknown: surface normals \(N\) and albedo \(\rho\). We set up a linear system per pixel.”
+
+\vspace{5mm}
+
+\textbf{Slide 32: Image model (cont.)}\\
+“Assuming linear camera response, we write \(I_j = k \rho (N \cdot S_j) = g \cdot V_j\), where \(g = \rho N\) and \(V_j = k S_j\). This linearizes the problem.”
+
+\vspace{5mm}
+
+\textbf{Slide 33: Least squares problem}\\
+“We solve for \(g\) using least squares: \(V g = I\). Then, albedo \(\rho = \|g\|\) and normal \(N = g / \rho\). This gives us surface orientation and reflectance at each pixel.”
+
+\vspace{5mm}
+
+\textbf{Slide 34: Synthetic example (results)}\\
+“Here are the recovered albedo and normal field from the synthetic example. Notice how normals capture surface curvature.”
+
+\vspace{5mm}
+
+\textbf{Slide 35: Recovering a surface from normals}\\
+“From normals, we compute surface gradients: \(f_x = g_1 / g_3\), \(f_y = g_2 / g_3\). Then, we integrate these gradients to recover height \(f(x,y)\).”
+
+\vspace{5mm}
+
+\textbf{Slide 36: Recovering a surface from normals (cont.)}\\
+“Integration can be done along a path: \(f(x,y) = \int_0^x f_x(s,0) ds + \int_0^y f_y(x,t) dt + C\). For robustness, average over many paths.”
+
+\vspace{5mm}
+
+\textbf{Slide 37: Recovering a surface from normals (cont.)}\\
+“The surface must satisfy integrability: \(\partial_y (g_1/g_3) = \partial_x (g_2/g_3)\). If not, the estimated normals are not consistent with a valid surface.”
+
+\vspace{5mm}
+
+\textbf{Slide 38: Surface recovered by integration}\\
+“Here is the final recovered surface from integration. The height map clearly shows the 3D shape reconstructed solely from shading.”
+
+\vspace{5mm}
+
+\textbf{Slide 39: MP4 preview}\\
+“In this video preview, we see the full pipeline: input images, recovered albedo, normals, and the final 3D model.”
+
+\vspace{5mm}
+
+\textbf{Slide 40: Limitations of basic shape from shading}\\
+“Classical shape from shading has limitations: orthographic camera, simplistic reflectance, no shadows, no interreflections, missing data, and tricky integration. Modern methods address many of these.”
+
+\vspace{5mm}
+
+\textbf{Slide 41: Shape from shading today}\\
+“Modern approaches use deep learning to predict surface normals, depth, albedo, and shading from a single image. Models like Stable Diffusion and others are being adapted for inverse rendering tasks.”
+
+\vspace{5mm}
+
+\textbf{Slide 42: Shape from shading today (cont.)}\\
+“Here we see a comparison: a generated image and its decomposed components—normals, depth, albedo, shading—predicted by recent generative models.”
+
+\vspace{5mm}
+
+\textbf{Slide 43: Outline (final part)}\\
+“Finally, we will discuss estimating the direction of light sources from a single image—useful for forensics and scene understanding.”
+
+\vspace{5mm}
+
+\textbf{Slide 44: Finding the direction of the light source}\\
+“Given known surface normals \(N\) and intensities \(I\), we can solve for light direction \(S\) using a linear system: \(N S = I\). This requires normals from multiple points.”
+
+\vspace{5mm}
+
+\textbf{Slide 45: Finding light direction (occluding contour)}\\
+“A special case: points on the occluding contour have \(N_z = 0\). This simplifies the problem to estimating only the \(S_x\) and \(S_y\) components.”
+
+\vspace{5mm}
+
+\textbf{Slide 46: Linear system for occluding contour}\\
+“On the occluding contour, the system reduces to \(N_{xy} S_{xy} = I\). This is easier to solve and provides a good estimate of the projected light direction.”
+
+\vspace{5mm}
+
+\textbf{Slide 47: Finding the direction of the light source (example)}\\
+“Here’s a real example: from an image with known geometry, we estimate the light source direction. This is useful for virtual object insertion and lighting consistency checks.”
+
+\vspace{5mm}
+
+\textbf{Slide 48: Application: Detecting composite photos}\\
+“Lighting inconsistency is a telltale sign of photo tampering. By estimating light direction, we can detect if objects in a composite image are lit differently—exposing forgeries.”
+
+\vspace{5mm}
+
+\textbf{Slide 49: DeepFake detection today}\\
+“Modern DeepFake detection also uses geometric and lighting cues. Here, generative models sometimes make mistakes in shadows, perspective, and light coherence—which can be automatically detected.”
+
+\vspace{5mm}
+
+\end{document}
