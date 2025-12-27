@@ -1,0 +1,1 @@
+I need to record a lecture video using these slides. Please prepare a narrative file for each slide, make sure to add slide number in the header. Give me a latex document for this
