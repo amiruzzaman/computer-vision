@@ -1,0 +1,105 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\title{Lecture Narrative: Generative Adversarial Networks}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\onehalfspacing
+
+\section*{Recording Notes}
+Each subsection corresponds to one slide in the GAN lecture. These notes are written to be spoken aloud and to complement, not repeat, slide text.
+
+\hrule
+\vspace{1em}
+
+\subsection*{Slide 1: Generative Adversarial Networks}
+This lecture focuses on Generative Adversarial Networks, or GANs. GANs are a powerful framework for learning data distributions and generating realistic synthetic data, especially images.
+
+\subsection*{Slide 2: Outline}
+We will start with an introduction to generative models, then study the GAN framework and its mathematics, discuss training challenges, explore major GAN variants, and conclude with applications and research frontiers.
+
+\subsection*{Slide 3: What Are Generative Models?}
+Generative models aim to learn the underlying probability distribution of data. Once learned, they can generate new samples that resemble the training data, rather than just labeling or classifying inputs.
+
+\subsection*{Slide 4: Generative vs Discriminative Models}
+Discriminative models learn decision boundaries, such as predicting labels given inputs. Generative models instead learn how the data itself is structured, enabling synthesis, simulation, and deeper understanding.
+
+\subsection*{Slide 5: Applications of Generative Models}
+Generative models are used in image synthesis, data augmentation, anomaly detection, and style transfer. Their ability to generate data makes them valuable even when labeled data is scarce.
+
+\subsection*{Slide 6: Types of Generative Models}
+There are several families of generative models, including VAEs, normalizing flows, GANs, autoregressive models, and diffusion models. GANs are notable for producing sharp, high-quality images.
+
+\subsection*{Slide 7: GAN Characteristics}
+GANs rely on adversarial training between two networks and do not require explicit likelihood computation. Historically, they achieved state-of-the-art image quality prior to diffusion models.
+
+\subsection*{Slide 8: The GAN Framework}
+A GAN consists of a generator that maps noise to synthetic data and a discriminator that distinguishes real data from generated data. These two networks are trained simultaneously.
+
+\subsection*{Slide 9: Adversarial Training Intuition}
+The generator tries to fool the discriminator, while the discriminator tries to detect fake samples. This competition drives both networks to improve.
+
+\subsection*{Slide 10: The GAN Minimax Game}
+GAN training is formulated as a two-player minimax game. The generator minimizes the objective, while the discriminator maximizes it, leading ideally to a Nash equilibrium.
+
+\subsection*{Slide 11: Nash Equilibrium in GANs}
+At equilibrium, the generator reproduces the true data distribution, and the discriminator can no longer tell real from fake, outputting probability one-half everywhere.
+
+\subsection*{Slide 12: Mathematical Objective}
+The original GAN objective combines expectations over real data and generated data. This formulation provides a theoretical foundation but introduces practical optimization challenges.
+
+\subsection*{Slide 13: Optimal Discriminator}
+For a fixed generator, the optimal discriminator has a closed-form solution depending on the ratio of real and generated data distributions.
+
+\subsection*{Slide 14: Training Algorithm}
+GANs are trained by alternating updates: multiple discriminator updates followed by a generator update. In practice, generator loss is modified to avoid vanishing gradients.
+
+\subsection*{Slide 15: Convergence and Global Optimality}
+At the global optimum, the GAN objective reduces to minimizing the Jensen--Shannon divergence between real and generated distributions.
+
+\subsection*{Slide 16: Training Instability Issues}
+GAN training is notoriously unstable. Common issues include vanishing gradients, mode collapse, and non-convergence.
+
+\subsection*{Slide 17: Mode Collapse}
+In mode collapse, the generator produces limited diversity, covering only a few modes of the data distribution while ignoring others.
+
+\subsection*{Slide 18: Wasserstein GAN}
+WGAN replaces the JS divergence with the Wasserstein distance, providing smoother gradients and more meaningful loss values.
+
+\subsection*{Slide 19: WGAN with Gradient Penalty}
+WGAN-GP improves stability by enforcing the Lipschitz constraint using a gradient penalty rather than weight clipping.
+
+\subsection*{Slide 20: DCGAN}
+DCGAN introduced architectural guidelines that enabled stable GAN training using convolutional neural networks and learned meaningful latent representations.
+
+\subsection*{Slide 21: Conditional GANs}
+Conditional GANs incorporate auxiliary information such as class labels, allowing controlled generation and improved sample quality.
+
+\subsection*{Slide 22: StyleGAN Evolution}
+The StyleGAN series introduced style-based generators, improved training stability, and high-quality, controllable image synthesis.
+
+\subsection*{Slide 23: BigGAN}
+BigGAN demonstrated that scaling model size, batch size, and data can dramatically improve image fidelity at high resolutions.
+
+\subsection*{Slide 24: Text-to-Image Models}
+Modern systems like DALL·E and Imagen combine generative modeling with powerful language representations, enabling semantic image synthesis.
+
+\subsection*{Slide 25: Stable Diffusion}
+Stable Diffusion operates in latent space, making text-to-image generation computationally efficient while maintaining high quality.
+
+\subsection*{Slide 26: Medical Applications}
+GANs are used in medical imaging for data augmentation and anomaly detection, but require careful validation and ethical consideration.
+
+\subsection*{Slide 27: GANs vs Diffusion Models}
+Diffusion models offer more stable training and better mode coverage, while GANs excel in fast sampling. Hybrid approaches aim to combine their strengths.
+
+\subsection*{Slide 28: Conclusion and Outlook}
+GANs revolutionized generative modeling and remain an active research area. Future work includes 3D generation, video synthesis, multimodal learning, and responsible deployment.
+
+\end{document}
